@@ -38,15 +38,49 @@ function Authentication({ setUser }) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         fullWidth
-        sx={{ marginBottom: 2 }}
+        
+        sx={{
+          marginBottom: 2,
+          '& .MuiInputBase-input': {
+            color: 'white', // Change text color here
+          },
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: 'green', // Default border color
+            },
+            '&:hover fieldset': {
+              borderColor: 'orange', // Border color on hover
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: 'red', // Border color when focused
+            },
+          },
+        }}
       />
       <TextField
         label="Password"
         type="password"
+      
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         fullWidth
-        sx={{ marginBottom: 2 }}
+        sx={{
+          marginBottom: 2,
+          '& .MuiInputBase-input': {
+            color: 'white', // Change text color here
+          },
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: 'green', // Default border color
+            },
+            '&:hover fieldset': {
+              borderColor: 'orange', // Border color on hover
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: 'red', // Border color when focused
+            },
+          },
+        }}
       />
       {isSignUp ? (
         <>
