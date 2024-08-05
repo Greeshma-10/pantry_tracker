@@ -104,7 +104,7 @@ function Authentication({ setUser }) {
             Sign In
           </Button>
           <Typography variant="body2">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Button onClick={() => setIsSignUp(true)}>Sign Up</Button>
           </Typography>
         </>
