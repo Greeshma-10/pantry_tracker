@@ -30,6 +30,9 @@ export default function Home() {
   const [open, setOpen] = useState(false);
   const [itemName, setItemName] = useState('');
   const [itemCategory, setItemCategory] = useState('');
+  const [itemDescription, setItemDescription] = useState('');
+  const [itemPrice, setItemPrice] = useState('');
+  const [itemSupplier, setItemSupplier] = useState('');
   const [user, setUser] = useState(null);
   const categories = ['Vegetables', 'Fruits', 'Dairy', 'Meat', 'Pulses'];
 
@@ -47,15 +50,15 @@ export default function Home() {
     }
   };
 
-  const addItem = async (item, category) => {
+  const addItem = async (item, category, description, price, supplier) => {
     try {
       const docRef = doc(collection(firestore, 'inventory'), item);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const { quantity } = docSnap.data();
-        await setDoc(docRef, { quantity: quantity + 1, category, userId: user.uid });
+        await setDoc(docRef, { quantity: quantity + 1, category, description, price, supplier, userId: user.uid });
       } else {
-        await setDoc(docRef, { quantity: 1, category, userId: user.uid });
+        await setDoc(docRef, { quantity: 1, category, description, price, supplier, userId: user.uid });
       }
       await updateInventory(user.uid);
     } catch (error) {
@@ -146,16 +149,12 @@ export default function Home() {
 </Button>
 
 
-          Search Bar
-          
           <TextField
             label="Search"
             variant="outlined"
-            
             fullWidth
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            
             sx={{
               color: 'white', 
               marginBottom: 3,
@@ -169,12 +168,10 @@ export default function Home() {
               '& .MuiOutlinedInput-notchedOutline': {
                 borderColor: 'white', // Border color of the Select
               },
-     
               '& .MuiOutlinedInput-input': {
                 color: 'white', // Text color
                 fontSize: '1rem', // Font size
               },
-              
             }}
           />
           <FormControl fullWidth sx={{ marginBottom: 2, display: 'flex', alignItems: 'center' } }>
@@ -207,8 +204,6 @@ export default function Home() {
       '& .MuiOutlinedInput-notchedOutline': {
         borderColor: 'white', // Border color of the Select
       },
-     
-      
       '& .MuiSelect-icon': {
         color: 'white', // Color of the dropdown arrow
       },
@@ -238,10 +233,16 @@ export default function Home() {
                   ))}
                 </Select>
               </FormControl>
+              <TextField id="outlined-description" label="Description" variant="outlined" fullWidth value={itemDescription} onChange={(e) => setItemDescription(e.target.value)} sx={{ marginBottom: 2 }} />
+              <TextField id="outlined-price" label="Price" variant="outlined" fullWidth value={itemPrice} onChange={(e) => setItemPrice(e.target.value)} sx={{ marginBottom: 2 }} />
+              <TextField id="outlined-supplier" label="Supplier" variant="outlined" fullWidth value={itemSupplier} onChange={(e) => setItemSupplier(e.target.value)} sx={{ marginBottom: 2 }} />
               <Button variant="outlined" fullWidth onClick={() => {
-                addItem(itemName, itemCategory);
+                addItem(itemName, itemCategory, itemDescription, itemPrice, itemSupplier);
                 setItemName('');
                 setItemCategory('');
+                setItemDescription('');
+                setItemPrice('');
+                setItemSupplier('');
                 handleClose();
               }}>
                 Add
@@ -256,17 +257,26 @@ export default function Home() {
               Inventory Items
             </Typography>
             <Grid container spacing={2}>
-              {filteredInventory.map(({ name, quantity, category }) => (
+              {filteredInventory.map(({ name, quantity, category, description, price, supplier }) => (
                 <Grid item xs={12} sm={6} md={4} key={name}>
                   <Box bgcolor="#f0f0f0" padding={2} display="flex" flexDirection="column" alignItems="center">
                     <Typography variant="h5" color="#333" textAlign="center" marginBottom={1}>
                       {name.charAt(0).toUpperCase() + name.slice(1)}
                     </Typography>
-                    <Typography variant="h5" color="#333" textAlign="center" marginBottom={1}>
+                    <Typography variant="h6" color="#333" textAlign="center" marginBottom={1}>
                       Category: {category}
                     </Typography>
-                    <Typography variant="h5" color="#333" textAlign="center" marginBottom={1}>
+                    <Typography variant="h6" color="#333" textAlign="center" marginBottom={1}>
                       Quantity: {quantity}
+                    </Typography>
+                    <Typography variant="body1" color="#333" textAlign="center" marginBottom={1}>
+                      Description: {description}
+                    </Typography>
+                    <Typography variant="body1" color="#333" textAlign="center" marginBottom={1}>
+                      Price: ${price}
+                    </Typography>
+                    <Typography variant="body1" color="#333" textAlign="center" marginBottom={1}>
+                      Supplier: {supplier}
                     </Typography>
                     <Button variant="contained" onClick={() => removeItem(name)} fullWidth>
                       Remove
