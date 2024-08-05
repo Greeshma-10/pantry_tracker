@@ -5,6 +5,8 @@ import { firestore, auth } from '@/firebase'; // Ensure the correct path to fire
 import { collection, doc, getDocs, query, setDoc, deleteDoc, getDoc, where } from 'firebase/firestore';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import Authentication from './Authentication'; // Ensure correct path
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'; // Import the autoTable plugin for jsPDF
 
 const style = {
   position: 'absolute',
@@ -107,6 +109,29 @@ export default function Home() {
     }
 
     setFilteredInventory(filtered);
+  };
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(12);
+    
+    doc.text('Inventory Data', 10, 10);
+  
+    const headers = ["Name", "Category", "Description", "Price", "Supplier"];
+    const rows = inventory.map(item => [
+      item.name,
+      item.category,
+      item.description,
+      item.price,
+      item.supplier,
+    ]);
+  
+    doc.autoTable({
+      head: [headers],
+      body: rows,
+      startY: 20,
+    });
+  
+    doc.save('inventory.pdf');
   };
 
   useEffect(() => {
@@ -216,7 +241,9 @@ export default function Home() {
     ))}
   </Select>
 </FormControl>
-
+<Button variant="contained" color="primary" onClick={exportToPDF} sx={{ marginBottom: 2 }}>
+  Export to PDF
+</Button>
           <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
             <Box sx={style}>
               <Typography id="modal-modal-title" variant="h6" component="h2">
