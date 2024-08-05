@@ -24,11 +24,14 @@ const style = {
 
 export default function Home() {
   const [inventory, setInventory] = useState([]);
+  const [filteredInventory, setFilteredInventory] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [open, setOpen] = useState(false);
   const [itemName, setItemName] = useState('');
   const [itemCategory, setItemCategory] = useState('');
   const [user, setUser] = useState(null);
-  const categories = ['Vegetables', 'Fruits', 'Dairy', 'Meat'];
+  const categories = ['Vegetables', 'Fruits', 'Dairy', 'Meat', 'Pulses'];
 
   const updateInventory = async (userId) => {
     try {
@@ -87,6 +90,22 @@ export default function Home() {
     }
   };
 
+  const filterInventory = () => {
+    let filtered = inventory;
+
+    if (searchQuery) {
+      filtered = filtered.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    if (selectedCategory) {
+      filtered = filtered.filter(item => item.category === selectedCategory);
+    }
+
+    setFilteredInventory(filtered);
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -101,6 +120,10 @@ export default function Home() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    filterInventory();
+  }, [searchQuery, selectedCategory, inventory]);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -108,9 +131,89 @@ export default function Home() {
     <Box width="100%" minHeight="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center" padding={2}>
       {user ? (
         <>
-          <Button variant="contained" onClick={handleSignOut} sx={{ marginBottom: 2 }}>
+          <Button variant="contained" onClick={handleSignOut} sx={{ marginBottom: 2,position: 'absolute',
+            top: 25, // Adjust top position
+            right: 40, // Adjust right position }}
+          }}>
             Sign Out
           </Button>
+
+          Search Bar
+          
+          <TextField
+            label="Search"
+            variant="outlined"
+            
+            fullWidth
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            
+            sx={{
+              color: 'white', 
+              marginBottom: 3,
+              // Set the width of the TextField
+              width: '60%',
+              // Customizing the background color
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: 'black', // Background color
+                borderRadius: 2, // Rounded corners
+              },
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'white', // Border color of the Select
+              },
+     
+              '& .MuiOutlinedInput-input': {
+                color: 'white', // Text color
+                fontSize: '1rem', // Font size
+              },
+              
+            }}
+          />
+          <FormControl fullWidth sx={{ marginBottom: 2, display: 'flex', alignItems: 'center' } }>
+  <InputLabel id="category-label"  sx={{
+      //color: '#555', 
+      position: 'absolute',
+      top: 0, // Align the label to the top
+      left: 290, // Align the label to the left
+      padding: '0 4px',
+      textAlign: 'center', 
+      width: '30%', // Ensure the label spans the width of the container
+      display: 'flex', // Flex container for centering label
+      justifyContent: 'topleft' // Center label horizontally
+    }}
+  > Category</InputLabel>
+  <Select
+    labelId="category-label"
+    
+    id="category-select"
+    
+    value={itemCategory}
+    label="Category"
+    onChange={(e) => setItemCategory(e.target.value)}
+    sx={{
+      textAlign:'justified',
+      width: '60%',
+      '& .MuiSelect-select': {
+        color: 'white', // Text color inside the Select
+      },
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderColor: 'white', // Border color of the Select
+      },
+     
+      
+      '& .MuiSelect-icon': {
+        color: 'white', // Color of the dropdown arrow
+      },
+    }}
+  >
+    {categories.map((category) => (
+      <MenuItem key={category} value={category}>
+        {category}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
+
           <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
             <Box sx={style}>
               <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -145,7 +248,7 @@ export default function Home() {
               Inventory Items
             </Typography>
             <Grid container spacing={2}>
-              {inventory.map(({ name, quantity, category }) => (
+              {filteredInventory.map(({ name, quantity, category }) => (
                 <Grid item xs={12} sm={6} md={4} key={name}>
                   <Box bgcolor="#f0f0f0" padding={2} display="flex" flexDirection="column" alignItems="center">
                     <Typography variant="h5" color="#333" textAlign="center" marginBottom={1}>
@@ -172,3 +275,4 @@ export default function Home() {
     </Box>
   );
 }
+

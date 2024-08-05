@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { auth } from '@/firebase'; // Adjust path as needed
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { Box, TextField, Button, Typography } from '@mui/material';
+import { Box, TextField, Button, Typography, colors } from '@mui/material';
+
+
 
 function Authentication({ setUser }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false); // State to manage whether to show sign-up or sign-in form
+  const [error, setError] = useState(''); // State for error message
+
 
   const handleSignUp = async () => {
     try {
@@ -21,13 +25,14 @@ function Authentication({ setUser }) {
 
   const handleSignIn = async () => {
     try {
-      console.log('Signing in with email:', email);
+      setError(''); // Clear previous errors
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('User signed in:', userCredential.user);
       setUser(userCredential.user);
     } catch (error) {
       console.error('Error signing in:', error);
+      setError('Invalid email or password.'); // Set error message
     }
+    
   };
 
   return (
@@ -82,6 +87,7 @@ function Authentication({ setUser }) {
           },
         }}
       />
+      
       {isSignUp ? (
         <>
           <Button onClick={handleSignUp} variant="contained" sx={{ marginBottom: 1 }}>
