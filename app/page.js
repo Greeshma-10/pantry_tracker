@@ -109,6 +109,24 @@ export default function Home() {
     setFilteredInventory(filtered);
   };
 
+  const exportToCSV = () => {
+    const csvContent = "data:text/csv;charset=utf-8,"
+      + "Name,Category,Description,Price,Supplier\n";
+
+    const formattedInventory = inventory.map(item => (
+      `${item.name},${item.category},${item.description},${item.price},${item.supplier}`
+    ));
+
+    const csvData = csvContent + formattedInventory.join("\n");
+
+    const encodedUri = encodeURI(csvData);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "inventory.csv");
+    document.body.appendChild(link);
+    link.click();
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -236,59 +254,33 @@ export default function Home() {
               <TextField id="outlined-description" label="Description" variant="outlined" fullWidth value={itemDescription} onChange={(e) => setItemDescription(e.target.value)} sx={{ marginBottom: 2 }} />
               <TextField id="outlined-price" label="Price" variant="outlined" fullWidth value={itemPrice} onChange={(e) => setItemPrice(e.target.value)} sx={{ marginBottom: 2 }} />
               <TextField id="outlined-supplier" label="Supplier" variant="outlined" fullWidth value={itemSupplier} onChange={(e) => setItemSupplier(e.target.value)} sx={{ marginBottom: 2 }} />
-              <Button variant="outlined" fullWidth onClick={() => {
-                addItem(itemName, itemCategory, itemDescription, itemPrice, itemSupplier);
-                setItemName('');
-                setItemCategory('');
-                setItemDescription('');
-                setItemPrice('');
-                setItemSupplier('');
-                handleClose();
-              }}>
-                Add
-              </Button>
+              <Button variant="contained" onClick={() => addItem(itemName, itemCategory, itemDescription, itemPrice, itemSupplier)}>Add</Button>
             </Box>
           </Modal>
-          <Button variant="contained" onClick={handleOpen} sx={{ marginBottom: 2 }}>
-            Add New Item
+
+          <Button variant="contained" color="primary" onClick={exportToCSV} sx={{ marginBottom: 2 }}>
+            Export to CSV
           </Button>
-          <Box border="1px solid #333" width="100%" maxWidth="800px" overflow="auto" padding={2}>
-            <Typography variant="h2" color="White" textAlign="center" marginBottom={2}>
-              Inventory Items
-            </Typography>
-            <Grid container spacing={2}>
-              {filteredInventory.map(({ name, quantity, category, description, price, supplier }) => (
-                <Grid item xs={12} sm={6} md={4} key={name}>
-                  <Box bgcolor="#f0f0f0" padding={2} display="flex" flexDirection="column" alignItems="center">
-                    <Typography variant="h5" color="#333" textAlign="center" marginBottom={1}>
-                      {name.charAt(0).toUpperCase() + name.slice(1)}
-                    </Typography>
-                    <Typography variant="h6" color="#333" textAlign="center" marginBottom={1}>
-                      Category: {category}
-                    </Typography>
-                    <Typography variant="h6" color="#333" textAlign="center" marginBottom={1}>
-                      Quantity: {quantity}
-                    </Typography>
-                    <Typography variant="body1" color="#333" textAlign="center" marginBottom={1}>
-                      Description: {description}
-                    </Typography>
-                    <Typography variant="body1" color="#333" textAlign="center" marginBottom={1}>
-                      Price: ${price}
-                    </Typography>
-                    <Typography variant="body1" color="#333" textAlign="center" marginBottom={1}>
-                      Supplier: {supplier}
-                    </Typography>
-                    <Button variant="contained" onClick={() => removeItem(name)} fullWidth>
-                      Remove
-                    </Button>
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
+
+          <Grid container spacing={2}>
+            {filteredInventory.map((item) => (
+              <Grid item key={item.name} xs={12} sm={6} md={4}>
+                <Box border={1} p={2}>
+                  <Typography variant="h6">{item.name}</Typography>
+                  <Typography variant="body2">Category: {item.category}</Typography>
+                  <Typography variant="body2">Description: {item.description}</Typography>
+                  <Typography variant="body2">Price: ${item.price}</Typography>
+                  <Typography variant="body2">Supplier: {item.supplier}</Typography>
+                  <Button variant="contained" onClick={() => removeItem(item.name)} sx={{ marginTop: 1 }}>
+                    Remove
+                  </Button>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
         </>
       ) : (
-        <Authentication setUser={setUser} />
+        <Authentication />
       )}
     </Box>
   );
