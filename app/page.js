@@ -131,12 +131,20 @@ export default function Home() {
     <Box width="100%" minHeight="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center" padding={2}>
       {user ? (
         <>
-          <Button variant="contained" onClick={handleSignOut} sx={{ marginBottom: 2,position: 'absolute',
-            top: 25, // Adjust top position
-            right: 40, // Adjust right position }}
-          }}>
-            Sign Out
-          </Button>
+          <Button
+  variant="contained"
+  onClick={handleSignOut}
+  sx={{
+    position: 'absolute',
+    top: { xs: 8, sm: 16 }, // Adjust position for small and larger screens
+    right: { xs: 7, sm: 15 }, // Adjust position for small and larger screens
+    // Add padding or margin if needed for better placement
+    padding: '8px 16px',
+  }}
+>
+  Sign Out
+</Button>
+
 
           Search Bar
           
@@ -244,7 +252,7 @@ export default function Home() {
             Add New Item
           </Button>
           <Box border="1px solid #333" width="100%" maxWidth="800px" overflow="auto" padding={2}>
-            <Typography variant="h2" color="#333" textAlign="center" marginBottom={2}>
+            <Typography variant="h2" color="White" textAlign="center" marginBottom={2}>
               Inventory Items
             </Typography>
             <Grid container spacing={2}>
@@ -275,4 +283,3 @@ export default function Home() {
     </Box>
   );
 }
-
