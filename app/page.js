@@ -1,5 +1,6 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+
 import { Box, Typography, Button, Modal, TextField, Grid, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { firestore, auth } from '@/firebase'; // Ensure the correct path to firebase.js
 import { collection, doc, getDocs, query, setDoc, deleteDoc, getDoc, where } from 'firebase/firestore';
@@ -93,7 +94,7 @@ export default function Home() {
     }
   };
 
-  const filterInventory = () => {
+  const filterInventory = useCallback(() => {
     let filtered = inventory;
 
     if (searchQuery) {
@@ -107,7 +108,7 @@ export default function Home() {
     }
 
     setFilteredInventory(filtered);
-  };
+  }, [inventory, searchQuery, selectedCategory]);
 
   const exportToCSV = () => {
     const csvContent = "data:text/csv;charset=utf-8,"
@@ -143,7 +144,7 @@ export default function Home() {
 
   useEffect(() => {
     filterInventory();
-  }, [searchQuery, selectedCategory, inventory, filterInventory]);
+  }, [filterInventory]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
