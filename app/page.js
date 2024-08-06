@@ -5,7 +5,7 @@ import { Box, Typography, Button, Modal, TextField, Grid, Select, MenuItem, Form
 import { firestore, auth } from '@/firebase'; // Ensure the correct path to firebase.js
 import { collection, doc, getDocs, query, setDoc, deleteDoc, getDoc, where } from 'firebase/firestore';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import Authentication from './Authentication'; // Ensure correct path
+import Authentication from './Authentication.jsx'; // Ensure correct path
 
 const style = {
   position: 'absolute',
