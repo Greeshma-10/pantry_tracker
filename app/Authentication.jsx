@@ -37,6 +37,21 @@ function Authentication({ setUser }) {
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+       
+      <Box 
+        sx={{
+          backgroundColor: 'blue',
+          color: 'white',
+          padding: 2,
+          borderRadius: 2,
+          marginBottom: 2,
+          textAlign: 'center',
+        }}
+      >
+        <h1>WELCOME TO GoEasy</h1>
+        
+      </Box>
+   
       <Typography variant="h6">{isSignUp ? 'Sign Up' : 'Sign In'}</Typography>
       <TextField
         label="Email"

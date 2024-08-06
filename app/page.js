@@ -150,7 +150,11 @@ export default function Home() {
   const handleClose = () => setOpen(false);
 
   return (
-    <Box width="100%" minHeight="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center" padding={2}>
+    <Box width="100%" minHeight="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center" padding={2}
+    sx={{
+      backgroundColor: 'black', // Set background color to black
+      color: 'white', // Set text color to white
+    }}>
       {user ? (
         <>
           <Button
